@@ -15,6 +15,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // Ideally we should use Hilt to inject these objects
+        // but as this is only a test project I'll skip that
         val repository = ItemRepositoryImpl()
         val useCase = GetItemsUseCase(repository)
         val viewModel = ItemListViewModel(useCase)
