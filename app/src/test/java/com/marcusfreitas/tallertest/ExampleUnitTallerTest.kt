@@ -1,34 +1,58 @@
 package com.marcusfreitas.tallertest
 
+import com.marcusfreitas.tallertest.data.model.Item
 import com.marcusfreitas.tallertest.data.repository.ItemRepository
-import com.marcusfreitas.tallertest.data.repository.ItemRepositoryImpl
 import com.marcusfreitas.tallertest.domain.usecase.GetItemsUseCase
 import com.marcusfreitas.tallertest.ui.ItemListViewModel
-import org.junit.Test
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class ExampleUnitTallerTest {
 
     private lateinit var repository: ItemRepository
     private lateinit var viewModel: ItemListViewModel
+    private val testDispatcher = UnconfinedTestDispatcher()
 
     @Before
     fun setup() {
+        Dispatchers.setMain(testDispatcher)
         repository = mock()
-        val useCase = GetItemsUseCase()
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun testItemListIsFetchedSuccessfully() {
-        assertEquals(subject.test01(), 0)
+    fun testItemListIsFetchedSuccessfully() = runTest {
+        // Given
+        val sampleData = listOf(Item("Title 1", "Description 1"))
+        whenever(repository.getItems()).thenReturn(sampleData)
+
+        viewModel = ItemListViewModel(GetItemsUseCase(repository), testDispatcher)
+
+        advanceUntilIdle()
+
+        // Then
+        assertEquals(sampleData, viewModel.items.value)
     }
 
 }
