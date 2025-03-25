@@ -18,13 +18,8 @@ import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 @OptIn(ExperimentalCoroutinesApi::class)
-class ExampleUnitTallerTest {
+class ItemListViewModelTest {
 
     private lateinit var repository: ItemRepository
     private lateinit var viewModel: ItemListViewModel
